@@ -1,0 +1,6 @@
+#!/bin/bash
+
+CURRENT=$(cd $(dirname $0);pwd)
+phpunit="${CURRENT}/../vendor/bin/phpunit"
+
+${phpunit} --colors --bootstrap ${CURRENT}/bootstrap.php ${CURRENT}/Kumatch
