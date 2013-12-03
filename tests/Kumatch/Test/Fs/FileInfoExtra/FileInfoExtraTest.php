@@ -30,10 +30,10 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox ファイル存在可否の確認
+     * @test
      * @dataProvider existsProvider
      */
-    public function testExists1($path, $result)
+    public function exists1($path, $result)
     {
         $file = new FileInfoExtra($path);
 
@@ -41,10 +41,10 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox ファイル存在可否の確認
+     * @test
      * @dataProvider existsProvider
      */
-    public function testExists2($path, $result)
+    public function exists2($path, $result)
     {
         $info = new \SplFileInfo($path);
         /** @var \Kumatch\Fs\FileInfoExtra\FileInfoExtra $file */
@@ -63,10 +63,10 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox ファイルの拡張子を取得する
+     * @test
      * @dataProvider extensionProvider
      */
-    public function testGetExtension1($path, $result)
+    public function getExtension($path, $result)
     {
         $file = new FileInfoExtra($path);
 
@@ -87,21 +87,45 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox 自動判別によるMIME-Typeの取得
+     * @test
      * @dataProvider mimeTypeProvider
      */
-    public function testMimeType1($path, $result)
+    public function getMimeTypeByFinfo($path, $result)
     {
-        $file = new FileInfoExtra($path);
+        $file = $this->getMockBuilder('Kumatch\Fs\FileInfoExtra\FileInfoExtra')
+            ->setMethods(array('getExtensionsMimeType'))
+            ->setConstructorArgs(array($path))
+            ->getMock();
+        $file->expects($this->never())
+            ->method('getExtensionsMimeType');
 
+        /** @type FileInfoExtra $file */
         $this->assertEquals($result, $file->getMimeType());
+        $this->assertEquals($result, $file->getMimeType(FileInfoExtra::MIME_TYPE_FINFO));
     }
 
     /**
-     * @testdox 明示的に指定したMIME-Typeの取得
+     * @test
      * @dataProvider mimeTypeProvider
      */
-    public function testMimeType2($path, $result)
+    public function getMimeTypeByExtensionMap($path, $result)
+    {
+        $file = $this->getMockBuilder('Kumatch\Fs\FileInfoExtra\FileInfoExtra')
+            ->setMethods(array('getFinfoMimeType'))
+            ->setConstructorArgs(array($path))
+            ->getMock();
+        $file->expects($this->never())
+            ->method('getFinfoMimeType');
+
+        /** @type FileInfoExtra $file */
+        $this->assertEquals($result, $file->getMimeType(FileInfoExtra::MIME_TYPE_EXTENSION_MAP));
+    }
+
+    /**
+     * @test
+     * @dataProvider mimeTypeProvider
+     */
+    public function setAndGetMimeType($path, $result)
     {
         $file = new FileInfoExtra($path);
         $mimeType = 'kumatch/test';
@@ -130,10 +154,10 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox 自動判別によるMIME-Encodingの取得
+     * @test
      * @dataProvider mimeEncodingProvider
      */
-    public function testMimeEncoding1($path, $result)
+    public function getMimeEncoding($path, $result)
     {
         $file = new FileInfoExtra($path);
 
@@ -155,10 +179,10 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox ファイルハッシュダイジェスト
+     * @test
      * @dataProvider fileDigestProvider
      */
-    public function testFileHash($path, $valid)
+    public function getFileHash($path, $valid)
     {
         $file = new FileInfoExtra($path);
 
@@ -176,10 +200,10 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox ファイル Hmac ダイジェスト
+     * @test
      * @dataProvider fileDigestProvider
      */
-    public function testFileHmac($path, $valid)
+    public function getFileHmac($path, $valid)
     {
         $file = new FileInfoExtra($path);
         $key = "fileinfoextra_secret";

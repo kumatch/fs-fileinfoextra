@@ -4,6 +4,7 @@ namespace Kumatch\Fs\FileInfoExtra;
 
 use SplFileInfo;
 use finfo;
+use Skyzyx\Components\Mimetypes\Mimetypes;
 
 /**
  * Class FileInfoExtra
@@ -11,6 +12,9 @@ use finfo;
  */
 class FileInfoExtra extends SplFileInfo
 {
+    const MIME_TYPE_FINFO = 1;
+    const MIME_TYPE_EXTENSION_MAP = 2;
+
     /** @var string */
     protected $mimeType;
 
@@ -35,25 +39,39 @@ class FileInfoExtra extends SplFileInfo
     }
 
     /**
+     * @param int $runType
      * @return string|bool
      */
-    public function getMimeType()
+    public function getMimeType($runType = null)
     {
-        if (is_null($this->mimeType)) {
-            if (!$this->exists()) {
-                return false;
-            }
-
-            if ($this->isDir()) {
-                return false;
-            }
-
-            $finfo = new finfo(\FILEINFO_SYMLINK | \FILEINFO_MIME_TYPE);
-
-            return $finfo->file($this->getPathname());
-        } else {
+        if (!is_null($this->mimeType)) {
             return $this->mimeType;
         }
+
+        if (!$this->exists()) {
+            return false;
+        }
+
+        if ($this->isDir()) {
+            return false;
+        }
+
+        if (is_null($runType)) {
+            $runType = static::MIME_TYPE_FINFO;
+        }
+
+        switch ((int)$runType) {
+            case static::MIME_TYPE_EXTENSION_MAP:
+                $mimeType = $this->getExtensionsMimeType();
+                break;
+
+            case static::MIME_TYPE_FINFO:
+            default:
+                $mimeType = $this->getFinfoMimeType();
+                break;
+        }
+
+        return $mimeType;
     }
 
     /**
@@ -122,6 +140,24 @@ class FileInfoExtra extends SplFileInfo
         }
 
         return hash_hmac_file($algo, $this->getPathname(), $key, $raw_output);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFinfoMimeType()
+    {
+        $finfo = new finfo(\FILEINFO_SYMLINK | \FILEINFO_MIME_TYPE);
+
+        return $finfo->file($this->getPathname());
+    }
+
+    /**
+     * @return string
+     */
+    protected function getExtensionsMimeType()
+    {
+        return Mimetypes::getInstance()->fromFilename($this->getPathname());
     }
 
     /**
