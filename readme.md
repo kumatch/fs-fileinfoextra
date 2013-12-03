@@ -3,15 +3,22 @@ fs-fileinfoextra
 
 A extended SplFileInfo class thin.
 
+[![Build Status](https://travis-ci.org/kumatch/fs-fileinfoextra.png?branch=master)](https://travis-ci.org/kumatch/fs-fileinfoextra)
 
-Added features
+
+Methods
 -----
 
 * exists()
+
 * getExtension() - for PHP 5.3.5 or older
+
 * getMimeType() , with setMimeType() for sticky type
+
 * getMimeEncoding()
+
 * getFileHash($algorithm, $raw_output = false)
+
 * getFileHmac($algorithm, $key, $raw_output = false)
 
 
