@@ -129,7 +129,7 @@ class FileInfoExtra extends SplFileInfo
      */
     protected function _hasExtensionMethod()
     {
-        return method_exists($this, 'getExtension');
+        return version_compare(PHP_VERSION, '5.3.6', '>=');
     }
 
     /**
