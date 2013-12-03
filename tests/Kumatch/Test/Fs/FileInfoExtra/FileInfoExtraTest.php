@@ -63,37 +63,15 @@ class FileInfoExtraTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox ファイルの拡張子を取得する (php 5.3.6 or newer)
+     * @testdox ファイルの拡張子を取得する
      * @dataProvider extensionProvider
      */
     public function testGetExtension1($path, $result)
     {
-        $file = $this->getMock('Kumatch\Fs\FileInfoExtra\FileInfoExtra', array('_hasExtensionMethod'), array($path));
-        $file->expects($this->any())
-            ->method('_hasExtensionMethod')
-            ->will($this->returnValue(true));
+        $file = new FileInfoExtra($path);
 
-        /** @var $file FileInfoExtra */
         $this->assertEquals($result, $file->getExtension());
     }
-
-    /**
-     * @testdox ファイルの拡張子を取得する (php 5.3.5 or older)
-     * @dataProvider extensionProvider
-     */
-    public function testGetExtension2($path, $result)
-    {
-        $file = $this->getMock('Kumatch\Fs\FileInfoExtra\FileInfoExtra', array('_hasExtensionMethod'), array($path));
-        $file->expects($this->any())
-            ->method('_hasExtensionMethod')
-            ->will($this->returnValue(false));
-
-        /** @var $file FileInfoExtra */
-        $this->assertEquals($result, $file->getExtension());
-    }
-
-
-
 
 
 

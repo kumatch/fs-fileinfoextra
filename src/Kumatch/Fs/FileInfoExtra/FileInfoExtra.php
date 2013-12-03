@@ -129,7 +129,7 @@ class FileInfoExtra extends SplFileInfo
      */
     protected function _hasExtensionMethod()
     {
-        return \method_exists($this, 'getExtension');
+        return method_exists($this, 'getExtension');
     }
 
     /**
@@ -137,6 +137,6 @@ class FileInfoExtra extends SplFileInfo
      */
     protected function _getExtension()
     {
-        return \pathinfo($this->getFilename(), PATHINFO_EXTENSION);
+        return pathinfo($this->getFilename(), PATHINFO_EXTENSION);
     }
 }
